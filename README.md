@@ -6,7 +6,10 @@
 ##### By default we use '(&anchor_key)' as anchor name. anchor name can be a combination of the: 'a-z' or 'A-Z' or '_' or '.'
 ##### You can use you anchor pattern by re_anchor, re_name and anchor_start_patter in DRY.
 ```python
-merger_obj = ConfigMerger(config_dict, merge_at_init, re_anchor=None, re_name=None, anchor_start_pattern='(&', pointer_pattern='->', delimiter=':')
+re_anchor = r'\([\&][a-zA-Z\._0-9]{1,}\)'
+re_name = r'[a-zA-Z\._0-9]{1,}'
+
+merger_obj = ConfigMerger(config_dict, merge_at_init, re_anchor=re_anchor, re_name=re_name, anchor_start_pattern='(&', pointer_pattern='->', delimiter=':')
 ```
 ##### config_dict: input dictionary for do merging.
 
