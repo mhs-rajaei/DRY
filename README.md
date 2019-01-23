@@ -3,10 +3,49 @@
 
 ---
 ### Demo configuration in yaml
-#### We use '(&anchor_key)' as anchor name. anchor name can be a combination of the: 'a-z' or 'A-Z' or '_' or '.'
-#### We use '->' as pointer notion of anchor key. If you want to use multiple pointers in one key, you can add any string to pointer notion.
-#### Do not use pointer notion in the names of other keys unless you want this key to be a pointer to an anchor.
-#### In following everywhere that an anchor set by an anchor name, we call this key as an anchor and everywhere a pointer notion used we call the parent of this key as a pointer
+##### By default we use '(&anchor_key)' as anchor name. anchor name can be a combination of the: 'a-z' or 'A-Z' or '_' or '.'
+##### You can use you anchor pattern by re_anchor, re_name and anchor_start_patter in DRY.
+```python
+merger_obj = ConfigMerger(config_dict, merge_at_init, re_anchor=None, re_name=None, anchor_start_pattern='(&', pointer_pattern='->', delimiter=':')
+```
+##### config_dict: input dictionary for do merging.
+
+##### re_anchor: regex for extracting anchor from dictionary key. This regex do something like: 'key_name(&anchor_name)' -> '(&anchor_name)')
+
+##### re_name: regex for extracting name of anchor(s) or pointer(s).
+
+##### anchor_start_pattern: pattern of starting anchor for splitting key by that. by '(&' as anchor pattern and doing split, we have: key_name(&anchor_name)' -> ['key_name' , 'anchor_name']
+
+##### pointer_pattern: string pattern for find pointers in dictionary keys. this pattern must never be used as name of keys that we don't want to be a pointer. just use this pattern in where that you wanna have a pointer.
+##### For the duplicate name of this pattern in the same key, you can add any string to this pattern.
+```yaml
+   ->1: pointer1
+   ->2: pointer2
+```
+###### We do something like this:
+```python
+if pointer_pattern in key:
+    add the value of this key to pointers.
+```
+##### delimiter: separator in flatten dictionary. the default is ':'
+
+#### Notes:
+Don't use a pointer as a list value(element), because we don't merge this pointer.
+
+Priority in multiple pointers is: from newest to oldest, As Example:
+```yaml
+key_name(&anchor_1):
+  ...
+key_name(&anchor_2):
+  ...
+key_name(&anchor_3):
+  ...
+```
+###### For this example we fist of all merge 'anchor_3' then 'anchor_2' and finally 'anchor_1'.
+
+##### By default we use '->' as pointer notion of anchor key. If you want to use multiple pointers in one key, you can add any string to pointer notion.
+##### Do not use pointer notion in the names of other keys unless you want this key to be a pointer to an anchor.
+##### In following everywhere that an anchor set by an anchor name, we call this key as an anchor and everywhere a pointer notion used we call the parent of this key as a pointer
 ```yaml
 database:
   mysql(&mysql_anchor):
