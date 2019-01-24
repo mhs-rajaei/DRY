@@ -48,6 +48,12 @@ key_name(&anchor_3):
 
 ##### By default we use '->' as pointer notion of anchor key. If you want to use multiple pointers in one key, you can add any string to pointer notion.
 ##### Do not use pointer notion in the names of other keys unless you want this key to be a pointer to an anchor.
+##### Key Name cant start with anchor_start_pattern
+##### Lengtg name of Key must be greater than zero
+##### Anchor must be end of key name
+##### Anchors must be unique
+##### Pointers must match to the anchors
+
 ##### In following everywhere that an anchor set by an anchor name, we call this key as an anchor and everywhere a pointer notion used we call the parent of this key as a pointer
 ```yaml
 database:
