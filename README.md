@@ -178,11 +178,14 @@ applications:
 ```
 
 ### Usage
+
+##### pip install -r requirements.txt
+
 ```python
 from DRY import ConfigMerger
 
 # Loading config in YAML format
-config_dict = load_from_yaml(filename=os.path.join(BASE_DIR, 'config/config.yaml'))
+config_dict = load_from_yaml('config.yaml')
     
 # Usage of DRY
 merger_obj = ConfigMerger(config_dict, merge_at_init=True)
