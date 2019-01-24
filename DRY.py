@@ -277,7 +277,6 @@ class ConfigMerger:
 
         except Exception as err:
             logger.error(err, exc_info=True)
-            logger.exception(err)
             self.recursive_dict_return_value = -1
             return -1
 
