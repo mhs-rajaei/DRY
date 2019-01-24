@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 ruamel.yaml
 flatdict  # https://pypi.org/project/flatdict/
 melddict  # https://pypi.org/project/melddict/
 
+=======
+ruamel.yaml
+flatdict  # https://pypi.org/project/flatdict/
+melddict  # https://pypi.org/project/melddict/
+
+>>>>>>> b1a358d956a698ed5377fec606bb14b84c58a0aa
