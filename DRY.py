@@ -31,16 +31,16 @@ class ConfigMerger:
         :param re_name: regex for extracting name of anchor(s) or pointer(s).
 
         :param anchor_start_pattern: pattern of starting anchor for splitting key by that. by '(&' as anchor pattern and doing split,
-                                     we have: key_name(&anchor_name)' -> ['key_name' , 'anchor_name']
+         we have: key_name(&anchor_name)' -> ['key_name' , 'anchor_name']
 
         :param pointer_pattern: string pattern for find pointers in dictionary keys. this pattern must never be used as name of keys that we
-                                don't want to be a pointer. just use this pattern in where that you wanna have a pointer.
-                                 for the duplicate name of this pattern in the same key, you can add any string to this pattern.
+          don't want to be a pointer. just use this pattern in where that you wanna have a pointer.
+          for the duplicate name of this pattern in the same key, you can add any string to this pattern.
                                  ->1: pointer1
                                  ->2: pointer2
-                                we do something like this:
-                                    if pointer_pattern in the key:
-                                        add the value of this key to pointers.
+           we do something like this:
+               if pointer_pattern in the key:
+                   add the value of this key to pointers.
 
         :param delimiter: separator in flatten dictionary. the default is ':'
 
@@ -48,11 +48,9 @@ class ConfigMerger:
             Don't use a pointer as a list value(element), because we don't merge this pointer.
 
              Priority in multiple pointers is: from newest to oldest, As Example:
-                    {
                         key_name(&anchor_1)
                         key_name(&anchor_2)
                         key_name(&anchor_3)
-                    }
              For this example we fist of all merge 'anchor_3' then 'anchor_2' and finally 'anchor_1'.
         """
         try:
@@ -88,25 +86,25 @@ class ConfigMerger:
             self.valid_pointers = dict()
 
             self.return_value = 0
+            self.recursive_dict_return_value = 0
 
             self.delimiter = delimiter
             # Setting delimiter
             try:
                 if self.delimiter != ':':
                     self.flatten_config.set_delimiter(self.delimiter)
-                    logger.info(f"Flatten dictionary delimiter set to{self.delimiter}")
+                    logger.info(f"Flatten dictionary delimiter set to: {self.delimiter}")
             except Exception as err:
                 logger.error(err)
 
             if merge_at_init:
-                self.validation()
+                self.merge()
 
         except Exception as err:
             logger.error(err, exc_info=True)
-            logger.exception(err)
 
-    def validation(self):
-        # TODO: Check for same/exact name in anchors key name -> 'key_name' and 'key_name(&anchor_name)'
+    def merge(self):
+        # TODO: Check for same/exact name in anchors key name: 'key_name' and 'key_name(&anchor_name)'. Name of keys without anchor_start_pattern must be diffrent.
         # Checking Anchors
         _stat = self.anchor_validation()
         if _stat == -1:
@@ -291,9 +289,9 @@ class ConfigMerger:
                 if rest:
                     try:
                         if not isinstance(config_dict[first], dict):
-                            # if the key is not a dict, then make it a dict
                             print(f"key: {first} is not a dict")
                             logger.error(f"key: {first} is not a dict")
+                            # if the key is not a dict, then make it a dict
                             # config_dict[first] = {}
                             self.recursive_dict_return_value = -1
                             return -1
@@ -325,7 +323,6 @@ class ConfigMerger:
 
         except Exception as err:
             logger.error(err, exc_info=True)
-            logger.exception(err)
             self.recursive_dict_return_value = -1
             return -1
 
@@ -337,9 +334,9 @@ class ConfigMerger:
                 if rest:
                     try:
                         if not isinstance(config_dict[first], dict):
-                            # if the key is not a dict, then make it a dict
                             print('list map key is not a dict')
                             logger.error('list map key is not a dict')
+                            # if the key is not a dict, then make it a dict
                             # config_dict[first] = {}
                             self.recursive_dict_return_value = -1
                             return -1
@@ -381,7 +378,6 @@ class ConfigMerger:
 
         except Exception as err:
             logger.error(err, exc_info=True)
-            logger.exception(err)
             self.recursive_dict_return_value = -1
             return -1
 
@@ -463,7 +459,7 @@ class ConfigMerger:
                             duplicate_counter += 1
 
                         # In update we need update _flatten_config
-                        _flatten_config = flatdict.FlatDict(config_dict)
+                        # _flatten_config = flatdict.FlatDict(config_dict)
 
                     parent_idx += 1
 
@@ -473,36 +469,9 @@ class ConfigMerger:
             logger.error(err, exc_info=True)
             return -1
 
-    def remove_unusable_anchors(self, config_dict):
-        try:
-            _valid_anchors = self.update_valid_anchors(config_dict=self.config_dict)
-            if _valid_anchors == -1:
-                return -1
-
-            while _valid_anchors.keys():
-
-                # for anchor_key in reversed(list(_valid_anchors.keys())):
-                for anchor_key in _valid_anchors.keys():
-                    anchor_parent = _valid_anchors[anchor_key]['parent']
-                    # Update anchor names
-                    new_name = self.anchor_start_pattern.join(anchor_key.rsplit(self.anchor_start_pattern)[0:-1])
-                    self.del_in_dict(config_dict, (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(self.delimiter),
-                                     rename=True, new_name=new_name)
-                    # After update anchor name, we need update valid_anchors
-                    _valid_anchors = self.update_valid_anchors(config_dict=config_dict)
-                    if _valid_anchors == -1:
-                        return -1
-
-            return 1
-
-        except Exception as err:
-            logger.error(err, exc_info=True)
-            logger.exception(err)
-            return -1
-
     def clean_dict(self, config_dict):
         """
-        Make a copy of 'config_dict' and remove all anchors self.anchor_start_pattern and self.pointer_pattern
+        Make a copy of 'config_dict' and remove all anchors with 'self.anchor_start_pattern' and pointers with 'self.pointer_pattern' in keys
         :return: cleaned dict
         """
         try:
@@ -521,7 +490,6 @@ class ConfigMerger:
                     pointer_parent = _valid_pointers[pointer_key]['parent']
                     pointer_key = _valid_pointers[pointer_key]['key']
                     # Delete pointer
-                    # self.del_in_dict(duplicate, (self.delimiter.join(pointer_parent) + self.delimiter + self.pointer_pattern).split(self.delimiter))
                     stat = self.del_in_dict(duplicate, (self.delimiter.join(pointer_parent) + self.delimiter +
                                                         pointer_key).split(self.delimiter))
                     if stat == -1:
@@ -544,53 +512,10 @@ class ConfigMerger:
                     if _valid_anchors == -1:
                         return -1
 
-                # _valid_anchors = self.update_valid_anchors(config_dict=duplicate)
-                # if _valid_anchors == -1:
-                #     return -1
-                # _valid_pointers = self.update_valid_pointers(config_dict=duplicate)
-                # if _valid_pointers == -1:
-                #     return -1
-
             return duplicate
 
         except Exception as err:
             logger.error(err, exc_info=True)
-            logger.exception(err)
-            return -1
-
-    def clean_key_name(self, parent=None, anchor=None):
-        """
-        Remove every pointer or anchor from parent key
-        :return: clean key
-        """
-        try:
-            if anchor:
-                if self.anchor_start_pattern in anchor:
-                    return self.anchor_start_pattern.join(anchor.rsplit(self.anchor_start_pattern)[0:-1])
-
-            if parent:
-                if isinstance(parent, str):
-                    _parent = parent.split(self.delimiter)
-                elif isinstance(parent, list):
-                    _parent = parent
-                else:
-                    print("parent type dis match")
-                    return -1
-
-                idx = 0
-                for key in _parent:
-                    if self.anchor_start_pattern in key:
-                        _anchor = find_with_regex(key, self.re_anchor)
-                        if _anchor:
-                            new_name = self.anchor_start_pattern.join(key.rsplit(self.anchor_start_pattern)[0:-1])
-                            _parent[idx] = new_name
-                    idx += 1
-
-                return self.delimiter.join(_parent)
-
-        except Exception as err:
-            logger.error(err, exc_info=True)
-            logger.exception(err)
             return -1
 
     def merge_pointers_with_anchors(self):
@@ -616,9 +541,9 @@ class ConfigMerger:
                         # Checking for list as merge elements
                         both_list_flag = False
                         if isinstance(_anchor_part, list) and isinstance(_pointer_part, list):
-                            # Concat list and remove repeated values
+                            # Concat lists
                             merge_dict_parts = _anchor_part + _pointer_part
-                            logger.error(f"We have two list for merge in Config Merge. we concat lists and we dont remove repeated values")
+                            logger.error(f"We have two list for merge. We concat lists and we dont remove repeated values")
                             both_list_flag = True
                         elif isinstance(_anchor_part, list):
                             _anchor_part = dict.fromkeys(['_anchor_part_list_as_dict'], _anchor_part)
@@ -648,5 +573,4 @@ class ConfigMerger:
 
         except Exception as err:
             logger.error(err, exc_info=True)
-            logger.exception(err)
             return -1
