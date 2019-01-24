@@ -31,8 +31,8 @@ if pointer_pattern in key:
     add the value of this key to pointers.
 ```
 ##### delimiter: separator in flatten dictionary. the default is ':'
-
-#### Notes:
+---
+### Notes:
 ##### Don't use a pointer as a list value(element), because we don't merge this pointer.
 
 ##### By default we use '->' as pointer notion of anchor key. If you want to use multiple pointers in one key, you can add any string to pointer notion.
@@ -186,7 +186,7 @@ applications:
     # Priority of merging is from pointer to '->_2' to '->_1' and at the edn: '->'. This priority means if same key exist in this
     # pointer or anchors, value of pointer set as final value after merging, then '->-2'  to '->_1' to '->'
 ```
-
+---
 ### Usage
 
 ##### pip install -r requirements.txt
