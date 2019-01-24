@@ -33,7 +33,19 @@ if pointer_pattern in key:
 ##### delimiter: separator in flatten dictionary. the default is ':'
 
 #### Notes:
-Don't use a pointer as a list value(element), because we don't merge this pointer.
+##### Don't use a pointer as a list value(element), because we don't merge this pointer.
+
+##### By default we use '->' as pointer notion of anchor key. If you want to use multiple pointers in one key, you can add any string to pointer notion.
+
+##### Do not use pointer notion in the names of other keys unless you want this key to be a pointer to an anchor.
+##### Key Name cant start with anchor_start_pattern
+
+##### Lengtg name of Key must be greater than zero
+##### Anchor must be end of key name
+
+##### Anchors must be unique
+
+##### Pointers must match to the anchors
 
 Priority in multiple pointers is: from newest to oldest, As Example:
 ```yaml
@@ -45,14 +57,6 @@ key_name(&anchor_3):
   ...
 ```
 ###### For this example we fist of all merge 'anchor_3' then 'anchor_2' and finally 'anchor_1'.
-
-##### By default we use '->' as pointer notion of anchor key. If you want to use multiple pointers in one key, you can add any string to pointer notion.
-##### Do not use pointer notion in the names of other keys unless you want this key to be a pointer to an anchor.
-##### Key Name cant start with anchor_start_pattern
-##### Lengtg name of Key must be greater than zero
-##### Anchor must be end of key name
-##### Anchors must be unique
-##### Pointers must match to the anchors
 
 ##### In following everywhere that an anchor set by an anchor name, we call this key as an anchor and everywhere a pointer notion used we call the parent of this key as a pointer
 ```yaml
