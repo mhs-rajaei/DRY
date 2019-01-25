@@ -189,8 +189,14 @@ applications:
 ---
 ### Usage
 
+#### Clone repository
 ##### pip install -r requirements.txt
+##### copy files to your project
 
+#### Install
+##### python setup.py install
+
+#### Usage in python
 ```python
 from DRY import ConfigMerger
 
