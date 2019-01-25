@@ -36,8 +36,8 @@ class ConfigMerger:
         :param pointer_pattern: string pattern for find pointers in dictionary keys. this pattern must never be used as name of keys that we
           don't want to be a pointer. just use this pattern in where that you wanna have a pointer.
           for the duplicate name of this pattern in the same key, you can add any string to this pattern.
-                                 ->1: pointer1
-                                 ->2: pointer2
+             ->1: pointer1
+             ->2: pointer2
            we do something like this:
                if pointer_pattern in the key:
                    add the value of this key to pointers.
@@ -539,6 +539,7 @@ class ConfigMerger:
                             return -1
                         # Checking for list as merge elements
                         both_list_flag = False
+                        merge_dict_parts = None
                         if isinstance(_anchor_part, list) and isinstance(_pointer_part, list):
                             # Concat lists
                             merge_dict_parts = _anchor_part + _pointer_part

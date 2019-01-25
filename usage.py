@@ -12,8 +12,7 @@ def main():
     # For usage of DRY go to config.yaml.
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     # Loading config in YAML format
-    # config_dict = load_from_yaml(filename=os.path.join(BASE_DIR, 'config/config.yaml'))
-    config_dict = load_from_yaml(filename=r'F:\Downloads\Dropbox\Work\PycharmProjects\PatchMan37\config\patchman37.yaml')
+    config_dict = load_from_yaml(filename=os.path.join(BASE_DIR, 'config/config.yaml'))
     # YAML to JSON
     # to_json(config_dict, filename=os.path.join(BASE_DIR, 'config/config.json'))
 
