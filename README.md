@@ -33,7 +33,7 @@ merger_obj = ConfigMerger(config_dict, merge_at_init, re_anchor=re_anchor, re_na
 if pointer_pattern in key:
     add the value of this key to pointers.
 ```
-##### delimiter: separator in flatten dictionary. the default is ':'
+##### delimiter: separator in flatten dictionary, default delimiter is ':'
 ---
 ### Notes:
 ##### Don't use a pointer as a list value(element), because we don't merge this pointer.
