@@ -1,5 +1,8 @@
 # DRY
-  #### DRY: Don’t Repeat Yourself (Merge, Extend and Override your config file)
+#### DRY: Don’t Repeat Yourself (Merge, Extend and Override your config file)
+
+This code can handle dictionary like formats, like YAML, JSON, INI, XML, etc.
+You can follow below example to find out how the code works.
 
 ---
 ### Demo configuration in yaml

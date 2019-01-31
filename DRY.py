@@ -5,11 +5,13 @@ import os
 import logging
 from config.configure import setup_logging
 
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-logger = setup_logging(default_path=os.path.join(BASE_DIR, 'config/logging.yaml'))
+logger = setup_logging(path=os.path.join(BASE_DIR, 'config/logging55.yaml'), name="DRY")
 if logger is None:
     logger = logging.getLogger("DRY")  # DRY: Don’t Repeat Yourself (Merge, Extend and Override your config file)
     logger.info("Logging module configured by yaml configuration file")
+
 
 from collections import Counter
 from utils.util import find_with_regex
