@@ -7,7 +7,7 @@ from config.configure import setup_logging
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-logger = setup_logging(path=os.path.join(BASE_DIR, 'config/logging55.yaml'), name="DRY")
+logger = setup_logging(path=os.path.join(BASE_DIR, 'config/logging.yaml'), name="DRY")
 if logger is None:
     logger = logging.getLogger("DRY")  # DRY: Don’t Repeat Yourself (Merge, Extend and Override your config file)
     logger.info("Logging module configured by yaml configuration file")
