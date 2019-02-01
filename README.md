@@ -5,6 +5,10 @@ This code can handle dictionary like formats, like YAML, JSON, INI, XML, etc.
 You can follow below example to find out how the code works.
 
 ---
+##### Tested on python >= 3.6.x
+You can run it with python 2
+
+---
 ### Demo configuration in yaml
 ##### By default we use '(&anchor_key)' as anchor name. anchor name can be a combination of the: 'a-z' or 'A-Z' or '_' or '.'
 ##### You can use you anchor pattern by re_anchor, re_name and anchor_start_patter in DRY.

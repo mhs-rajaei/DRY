@@ -24,11 +24,11 @@ def remove_path_or_file(path):
         elif os.path.isdir(path):
             shutil.rmtree(path)  # remove_path_or_file dir and all contains
         else:
-            logger.info(f"file {path} is not a file or dir.")
-            print(f"file {path} is not a file or dir.")
+            logger.info("file {} is not a file or dir.".format(path))
+            print("file {} is not a file or dir.".format(path))
     except OSError as err:
-        print(f"Error: {err.filename} - {err.strerror}.")
-        logger.error(f"Error: {err.filename} - {err.strerror}.")
+        print("Error: {0} - {1}.".format(err.filename, err.strerror))
+        logger.error("Error: {0} - {1}.".format(err.filename, err.strerror))
 
 
 def calculate_file_hash(path):
@@ -49,7 +49,7 @@ def calculate_file_hash(path):
                 # sha1.update(data)
                 sha512.update(data)
     except Exception as err:
-        print(f"Exception occurred in calculating Hash value with exception: {err}")
+        print("Exception occurred in calculating Hash value with exception: {}".format(err))
         return -1, err
     # print("MD5: {0}".format(md5.hexdigest()))
     # print("SHA1: {0}".format(sha1.hexdigest()))
@@ -212,7 +212,8 @@ def find_with_regex(string_content, re_string):
 def recursive_items(dictionary):
     for key, value in dictionary.items():
         if isinstance(value, dict):
-            yield from recursive_items(value)
+            for _result in recursive_items(value):
+                yield _result
         else:
             yield (key, value)
 
@@ -225,7 +226,7 @@ def get_recursively(search_dict):
     """
     fields_found = []
     if not isinstance(search_dict, dict):
-        logger.error(f"search_dict must be dictionary ")
+        logger.error("search_dict must be dictionary ")
         return -1
 
     try:

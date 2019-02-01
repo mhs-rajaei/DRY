@@ -57,8 +57,7 @@ def to_json(obj, filename=None,
         return json_dump
 
 
-def load_from_json(json_string=None, filename=None,
-               encoding="utf-8", errors="strict", multiline=False, **kwargs):
+def load_from_json(json_string=None, filename=None, encoding="utf-8", errors="strict", multiline=False, **kwargs):
     if filename:
         with open(filename, 'r', encoding=encoding, errors=errors) as f:
             if multiline:
@@ -76,19 +75,13 @@ def load_from_json(json_string=None, filename=None,
     return data
 
 
-def to_yaml(obj, filename=None, default_flow_style=False,
-             encoding="utf-8", errors="strict",
-             **yaml_kwargs):
+def to_yaml(obj, filename=None, default_flow_style=False, encoding="utf-8", errors="strict", **yaml_kwargs):
     if filename:
-        with open(filename, 'w',
-                  encoding=encoding, errors=errors) as f:
-            yaml.dump(obj, stream=f,
-                      default_flow_style=default_flow_style,
-                      **yaml_kwargs)
+        with open(filename, 'w', encoding=encoding, errors=errors) as f:
+            yaml.dump(obj, stream=f, default_flow_style=default_flow_style, **yaml_kwargs)
+            # yaml.dump(obj, stream=f, default_flow_style=True, **yaml_kwargs)
     else:
-        return yaml.dump(obj,
-                         default_flow_style=default_flow_style,
-                         **yaml_kwargs)
+        return yaml.dump(obj, default_flow_style=default_flow_style, **yaml_kwargs)
 
 
 def load_from_yaml(yaml_string=None, filename=None, encoding="utf-8", errors="strict", **kwargs):
