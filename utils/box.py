@@ -45,10 +45,8 @@ _all_cap_re = re.compile('([a-z0-9])([A-Z])')
 # Abstract converter functions for use in any Box class
 
 
-def to_json(obj, filename=None,
-             encoding="utf-8", errors="strict", **json_kwargs):
-    json_dump = json.dumps(obj,
-                           ensure_ascii=False, **json_kwargs)
+def to_json(obj, filename=None, encoding="utf-8", errors="strict", **json_kwargs):
+    json_dump = json.dumps(obj, ensure_ascii=False, **json_kwargs)
     if filename:
         with open(filename, 'w', encoding=encoding, errors=errors) as f:
             f.write(json_dump if sys.version_info >= (3, 0) else

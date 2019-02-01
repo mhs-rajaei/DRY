@@ -1,4 +1,8 @@
 ruamel.yaml
-flatdict  # https://pypi.org/project/flatdict/
+
+# References:
+# flatdict  # https://pypi.org/project/flatdict/
+# melddict  # https://pypi.org/project/melddict/
+
 
 

@@ -20,7 +20,6 @@ if logger is None:
     logger = logging.getLogger("DRY")  # DRY: Dont Repeat Yourself (Merge, Extend and Override your config file)
     logger.info("Logging module configured by yaml configuration file")
 
-
 from collections import Counter
 from utils.util import find_with_regex
 from libs.melddict import MeldDict
@@ -133,7 +132,7 @@ class ConfigMerger:
             self.return_value = -1
             logger.error('Error in Config Merger')
             return -1
-
+        # Removing anchor and pointer notions
         self.config_dict = self.clean_dict(self.config_dict)
         if self.config_dict == -1:
             return -1
@@ -503,7 +502,6 @@ class ConfigMerger:
                 # Remove all pointers
                 POINTER_KEYS = list(_valid_pointers.keys())
                 pointer_key = POINTER_KEYS[0]
-                # for pointer_key in _valid_pointers.keys():
                 pointer_parent = _valid_pointers[pointer_key]['parent']
                 pointer_key = _valid_pointers[pointer_key]['key']
                 # Delete pointer
@@ -515,28 +513,12 @@ class ConfigMerger:
                 _valid_pointers = self.update_valid_pointers(config_dict=duplicate)
                 if _valid_pointers == -1:
                     return -1
-                # # Remove all pointers
-                # for pointer_key in _valid_pointers.keys():
-                # # for pointer_key in reversed(list(_valid_pointers.keys())):
-                #     pointer_parent = _valid_pointers[pointer_key]['parent']
-                #     pointer_key = _valid_pointers[pointer_key]['key']
-                #     # Delete pointer
-                #     stat = self.del_in_dict(duplicate, (self.delimiter.join(pointer_parent) + self.delimiter +
-                #                                         pointer_key).split(self.delimiter))
-                #     if stat == -1:
-                #         return -1
-                #     # After delete a pointer we need update _valid_pointers
-                #     _valid_pointers = self.update_valid_pointers(config_dict=duplicate)
-                #     if _valid_pointers == -1:
-                #         return -1
 
             # while _valid_anchors.keys() or _valid_pointers.keys():
             while _valid_anchors.keys():
                 # Update all anchors
                 ANCHOR_KEYS = list(_valid_anchors.keys())
                 anchor_key = ANCHOR_KEYS[0]
-                # for anchor_key in _valid_anchors.keys():
-                # for anchor_key in reversed(list(_valid_anchors.keys())):
                 anchor_parent = _valid_anchors[anchor_key]['parent']
                 new_name = self.anchor_start_pattern.join(anchor_key.rsplit(self.anchor_start_pattern)[0:-1])
                 self.del_in_dict(duplicate, (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(self.delimiter),
@@ -545,17 +527,6 @@ class ConfigMerger:
                 _valid_anchors = self.update_valid_anchors(config_dict=duplicate)
                 if _valid_anchors == -1:
                     return -1
-                # # Update all anchors
-                # for anchor_key in _valid_anchors.keys():
-                # # for anchor_key in reversed(list(_valid_anchors.keys())):
-                #     anchor_parent = _valid_anchors[anchor_key]['parent']
-                #     new_name = self.anchor_start_pattern.join(anchor_key.rsplit(self.anchor_start_pattern)[0:-1])
-                #     self.del_in_dict(duplicate, (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(self.delimiter),
-                #                      rename=True, new_name=new_name)
-                #     # After updating a key we need update _valid_anchors
-                #     _valid_anchors = self.update_valid_anchors(config_dict=duplicate)
-                #     if _valid_anchors == -1:
-                #         return -1
 
             return duplicate
 
@@ -567,33 +538,25 @@ class ConfigMerger:
         try:
             # Merge pointers with anchors, using reversed order for priority in merging
             for pointer_key in reversed(list(valid_pointers.keys())):
-            # for pointer_key in valid_pointers.keys():
                 pointer_parent = valid_pointers[pointer_key]['parent']
                 pointer_name = valid_pointers[pointer_key]['name']
 
                 for anchor_key in reversed(list(valid_anchors.keys())):
-                # for anchor_key in valid_anchors.keys():
                     anchor_name = valid_anchors[anchor_key]['name'][0]
                     anchor_parent = valid_anchors[anchor_key]['parent']
                     if anchor_name == pointer_name:
-
+                        # Check for existing of pointer in current anchor
                         _valid_pointers_ = dict()
                         exist_pointer_in_current_anchor = False
                         if not valid_anchors[anchor_key]['processed']:
-                            # Check for existing of pointer in current anchor
                             for _pointer_key_ in self.valid_pointers.keys():
-                                # print(anchor_key in valid_pointers[_pointer_key_]['parent'])
                                 if anchor_key in self.valid_pointers[_pointer_key_]['parent']:
                                     exist_pointer_in_current_anchor = True
                                     _valid_pointers_[_pointer_key_] = self.valid_pointers[_pointer_key_]
 
                         if exist_pointer_in_current_anchor and not valid_anchors[anchor_key]['processed']:
-                        # if exist_pointer_in_current_anchor:
                             valid_anchors[anchor_key]['processed'] = True
                             self.merge_pointers_with_anchors(valid_anchors=valid_anchors, valid_pointers=_valid_pointers_)
-                            # self.merge_pointers_with_anchors(valid_anchors={anchor_key: valid_anchors[anchor_key]}, valid_pointers=_valid_pointers_)
-                            # self.merge_pointers_with_anchors(valid_anchors={anchor_key: valid_anchors[anchor_key]},
-                            #                                  valid_pointers=valid_pointers)
 
                         _anchor_part = self.get_from_dict(self.config_dict,
                                                           (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(
@@ -624,8 +587,6 @@ class ConfigMerger:
                         if not both_list_flag:
                             # Merge dicts
                             merge_dict_parts = MeldDict(_anchor_part) + _pointer_part
-                            # merge_dict_parts = dictmerge.merge(_anchor_part, _pointer_part)
-                            # merge_dict_parts = dictmerge([_anchor_part, _pointer_part])
 
                         # Update pointer in dict with merged key
                         stat = self.set_in_dict(self.config_dict, self.delimiter.join(pointer_parent).split(self.delimiter), merge_dict_parts)
@@ -633,10 +594,6 @@ class ConfigMerger:
                             return -1
 
                         break
-
-            # self.config_dict = self.clean_dict(self.config_dict)
-            # if self.config_dict == -1:
-            #     return -1
 
             return 1
 

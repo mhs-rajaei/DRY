@@ -1,133 +1,25 @@
 {
-  "database": {
-    "mysql(&mysql_anchor)": {
-      "location": "mysql-db-prod",
-      "pass": "dsf#@4DdfdsF$FE{PHLG{FV+_>+Z>qDwcwEF$Wg64VM VNEPCKCPQ#_DXPJMQ#M",
-      "apiVersion": "v1",
-      "kind": "Service",
-      "metadata": {
-        "name": "mysql",
-        "labels": {
-          "heptio.com/example": "lamp"
-        }
-      },
-      "spec": {
-        "type": "ClusterIP",
-        "ports": {
-          "port": 3306,
-          "protocol": "TCP"
-        },
-        "selector": {
-          "app": "mysql"
-        }
-      }
-    },
-    "mongo_db(&mongodb_anchor)": {
-      "storage": {
-        "dbPath": "/data/db",
-        "engine": "wiredTiger",
-        "wiredTiger": {
-          "engineConfig": {
-            "cacheSizeGB": 8
-          },
-          "collectionConfig": {
-            "blockCompressor": "snappy"
-          }
-        }
-      },
-      "systemLog": {
-        "destination": "file",
-        "path": "/var/log/mongodb.log",
-        "logAppend": true,
-        "timeStampFormat": "iso8601-utc"
-      },
-      "replication": {
-        "oplogSizeMB": 10240,
-        "replSetName": "rs1"
-      },
-      "processManagement": {
-        "fork": true
-      },
-      "net": {
-        "bindIp": "192.0.2.1,127.0.0.1",
-        "port": 27018
-      },
-      "security": {
-        "keyFile": "data/key/rs1.key",
-        "authorization": "enabled"
-      },
-      "sharding": {
-        "clusterRole": "shardsvr"
-      }
-    },
-    "redis(&redis_anchor)": {
-      "parameters": {
-        "redis.default.host": "tcp://1.2.3.4:6789/1",
-        "redis.default.password": "azerty123",
-        "redis.some_cluster.host": [
-          "tcp://1.2.3.4:30001",
-          "tcp://2.3.4.5:30002"
-        ]
-      },
-      "client": {
-        "default": {
-          "host": "%redis.default.host%",
-          "type": "phpredis",
-          "password": "%redis.default.password%",
-          "persistent": true
-        },
-        "some_cluster": {
-          "host": [
-            "tcp://1.2.3.4:30001",
-            "tcp://2.3.4.5:30002"
-          ],
-          "type": "phpredis",
-          "cluster": true,
-          "failover": 1
-        }
-      }
-    }
-  },
   "applications": {
     "app_1": {
       "->": "mysql_anchor",
       "name": "app_1",
       "module": "mapp_1"
     },
-    "app_2": {
-      "name": "app_2",
-      "->": "mongodb_anchor",
-      "systemLog": {
-        "destination": "new_file",
-        "path": "/etc/my_log/mongodb_app_2.log",
-        "logAppend": false,
-        "timeStampFormat": "Simple",
-        "replication": {
-          "oplogSizeMB": 14853,
-          "replSetName": "rs5"
-        },
-        "processManagement": {
-          "fork": false
-        }
-      }
-    },
     "app_3": {
       "->": "redis_anchor",
       "name": "app_3",
       "parameters": {
-        "redis.default.host": "udp://100.214.30.45:7899/9",
-        "redis.my_new_key": "somestring",
         "client": {
           "default": {
             "host": "localhost"
           },
           "some_cluster": {
+            "cluster": false,
             "host": [
               "tcp://5.6.7.8:50007",
               "tcp://7.8.9.10:40255"
             ],
             "type": "phpredis",
-            "cluster": false,
             "new_key": {
               "new_child": "somevlue",
               "new_child_2": {
@@ -139,14 +31,122 @@
               }
             }
           }
-        }
+        },
+        "redis.my_new_key": "somestring",
+        "redis.default.host": "udp://100.214.30.45:7899/9"
+      }
+    },
+    "app_2": {
+      "->": "mongodb_anchor",
+      "name": "app_2",
+      "systemLog": {
+        "replication": {
+          "oplogSizeMB": 14853,
+          "replSetName": "rs5"
+        },
+        "processManagement": {
+          "fork": false
+        },
+        "logAppend": false,
+        "path": "/etc/my_log/mongodb_app_2.log",
+        "destination": "new_file",
+        "timeStampFormat": "Simple"
       }
     },
     "app_4": {
-      "name": "app_4",
-      "->": "redis_anchor",
       "->_1": "mysql_anchor",
-      "->_2": "mongodb_anchor"
+      "->_2": "mongodb_anchor",
+      "->": "redis_anchor",
+      "name": "app_4"
+    }
+  },
+  "database": {
+    "mysql(&mysql_anchor)": {
+      "kind": "Service",
+      "location": "mysql-db-prod",
+      "pass": "dsf#@4DdfdsF$FE{PHLG{FV+_>+Z>qDwcwEF$Wg64VM VNEPCKCPQ#_DXPJMQ#M",
+      "spec": {
+        "type": "ClusterIP",
+        "ports": {
+          "protocol": "TCP",
+          "port": 3306
+        },
+        "selector": {
+          "app": "mysql"
+        }
+      },
+      "apiVersion": "v1",
+      "metadata": {
+        "labels": {
+          "heptio.com/example": "lamp"
+        },
+        "name": "mysql"
+      }
+    },
+    "mongo_db(&mongodb_anchor)": {
+      "replication": {
+        "oplogSizeMB": 10240,
+        "replSetName": "rs1"
+      },
+      "systemLog": {
+        "path": "/var/log/mongodb.log",
+        "destination": "file",
+        "logAppend": true,
+        "timeStampFormat": "iso8601-utc"
+      },
+      "sharding": {
+        "clusterRole": "shardsvr"
+      },
+      "net": {
+        "bindIp": "192.0.2.1,127.0.0.1",
+        "port": 27018
+      },
+      "processManagement": {
+        "fork": true
+      },
+      "storage": {
+        "engine": "wiredTiger",
+        "wiredTiger": {
+          "engineConfig": {
+            "cacheSizeGB": 8
+          },
+          "collectionConfig": {
+            "blockCompressor": "snappy"
+          }
+        },
+        "dbPath": "/data/db"
+      },
+      "security": {
+        "keyFile": "data/key/rs1.key",
+        "authorization": "enabled"
+      }
+    },
+    "redis(&redis_anchor)": {
+      "client": {
+        "default": {
+          "host": "%redis.default.host%",
+          "password": "%redis.default.password%",
+          "type": "phpredis",
+          "persistent": true
+        },
+        "some_cluster": {
+          "cluster": true,
+          "host": [
+            "tcp://1.2.3.4:30001",
+            "tcp://2.3.4.5:30002"
+          ],
+          "type": "phpredis",
+          "failover": 1
+        }
+      },
+      "parameters": {
+        "redis.some_cluster.host": [
+          "tcp://1.2.3.4:30001",
+          "tcp://2.3.4.5:30002"
+        ],
+        "redis.default.password": "azerty123",
+        "redis.default.host": "tcp://1.2.3.4:6789/1"
+      }
     }
   }
 }
