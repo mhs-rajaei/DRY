@@ -11,9 +11,9 @@ You can follow below example to find out how the code works.
 To ease of use some requirements added to libs.
 
 #### References:
- ##### flatdict (https://pypi.org/project/flatdict/)
- ##### melddict (https://pypi.org/project/melddict/)
- ###### melddict work with python >= 2.7.x and python >= 3.6.x and work in windows!
+##### flatdict (https://pypi.org/project/flatdict/)
+##### melddict (https://pypi.org/project/melddict/)
+###### melddict work with python >= 2.7.x and python >= 3.6.x and work in windows!
 ---
 ### Demo configuration in yaml
 ##### By default we use '(&anchor_key)' as anchor name. anchor name can be a combination of the: 'a-z' or 'A-Z' or '_' or '.'
