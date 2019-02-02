@@ -521,8 +521,11 @@ class ConfigMerger:
                 anchor_key = ANCHOR_KEYS[0]
                 anchor_parent = _valid_anchors[anchor_key]['parent']
                 new_name = self.anchor_start_pattern.join(anchor_key.rsplit(self.anchor_start_pattern)[0:-1])
-                self.del_in_dict(duplicate, (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(self.delimiter),
-                                 rename=True, new_name=new_name)
+                if anchor_parent:
+                    self.del_in_dict(duplicate, (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(self.delimiter),
+                                     rename=True, new_name=new_name)
+                else:
+                    self.del_in_dict(duplicate, [anchor_key], rename=True, new_name=new_name)
                 # After updating a key we need update _valid_anchors
                 _valid_anchors = self.update_valid_anchors(config_dict=duplicate)
                 if _valid_anchors == -1:
@@ -557,10 +560,14 @@ class ConfigMerger:
                         if exist_pointer_in_current_anchor and not valid_anchors[anchor_key]['processed']:
                             valid_anchors[anchor_key]['processed'] = True
                             self.merge_pointers_with_anchors(valid_anchors=valid_anchors, valid_pointers=_valid_pointers_)
+                        if anchor_parent:
+                            _anchor_part = self.get_from_dict(self.config_dict,
+                                                              (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(
+                                                                  self.delimiter))
+                        else:
+                            _anchor_part = self.get_from_dict(self.config_dict, [anchor_key])
 
-                        _anchor_part = self.get_from_dict(self.config_dict,
-                                                          (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(
-                                                              self.delimiter))
+
                         if _anchor_part == -1:
                             return -1
 
@@ -584,7 +591,25 @@ class ConfigMerger:
                             _pointer_part = dict.fromkeys(['_pointer_part_list_as_dict'], _pointer_part)
                             logger.error("We have pointer part with type list. "
                                          "We create a dict with key: '_pointer_part_list_as_dict' and add this list to that ")
-                        if not both_list_flag:
+
+                        both_str_flag = False
+                        if isinstance(_anchor_part, string_types) and isinstance(_pointer_part, string_types):
+                            # Concat lists
+                            merge_dict_parts = _anchor_part + _pointer_part
+                            logger.error("We have two string for merge. We concat strings")
+                            both_str_flag = True
+
+                        elif isinstance(_anchor_part, string_types):
+                            _anchor_part = dict.fromkeys(['_anchor_part_string_as_dict'], _anchor_part)
+                            logger.error("We have anchor part with type of string. "
+                                         "We create a dict with key: '_anchor_part_string_as_dict' and add this string to that ")
+
+                        elif isinstance(_pointer_part, string_types):
+                            _pointer_part = dict.fromkeys(['_pointer_part_string_as_dict'], _pointer_part)
+                            logger.error("We have pointer part with type string. "
+                                         "We create a dict with key: '_pointer_part_string_as_dict' and add this string to that ")
+
+                        if not both_list_flag and both_str_flag:
                             # Merge dicts
                             merge_dict_parts = MeldDict(_anchor_part) + _pointer_part
 
