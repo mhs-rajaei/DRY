@@ -609,7 +609,7 @@ class ConfigMerger:
                             logger.error("We have pointer part with type string. "
                                          "We create a dict with key: '_pointer_part_string_as_dict' and add this string to that ")
 
-                        if not both_list_flag and both_str_flag:
+                        if not both_list_flag and not both_str_flag:
                             # Merge dicts
                             merge_dict_parts = MeldDict(_anchor_part) + _pointer_part
 
