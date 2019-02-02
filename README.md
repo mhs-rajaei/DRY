@@ -5,7 +5,7 @@ This code can handle dictionary like formats, like YAML, JSON, INI, XML, etc.
 You can follow below example to find out how the code works.
 
 ---
-#### Tested by python 2.7.15 and python 3.6.8 and 3.7.1
+#### Tested by python 2.7.15 and python 3.6.8
 ##### Working with python >= 2.7.x and python >= 3.6.x
 
 To ease of use some requirements added to libs.
@@ -13,7 +13,7 @@ To ease of use some requirements added to libs.
 #### References:
  ##### flatdict (https://pypi.org/project/flatdict/)
  ##### melddict (https://pypi.org/project/melddict/)
- ###### melddict work with python 2.7.x and work in windows!
+ ###### melddict work with python >= 2.7.x and python >= 3.6.x and work in windows!
 ---
 ### Demo configuration in yaml
 ##### By default we use '(&anchor_key)' as anchor name. anchor name can be a combination of the: 'a-z' or 'A-Z' or '_' or '.'
