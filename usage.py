@@ -24,9 +24,6 @@ def main():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     # Loading config in YAML format
     config_dict = load_from_yaml(filename=os.path.join(BASE_DIR, 'config/config.yaml'))
-    # config_dict = load_from_yaml(filename='patchman37.yaml')
-    # config_dict = load_from_yaml(filename='patchman27.yaml')
-    # config_dict = load_from_yaml(filename='patchman27_1.yaml')
 
     # YAML to JSON
     # to_json(config_dict, filename=os.path.join(BASE_DIR, 'config/config.json'))

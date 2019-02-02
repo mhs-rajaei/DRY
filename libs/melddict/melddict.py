@@ -3,12 +3,13 @@ import sys
 PY3 = sys.version_info[0] == 3
 if PY3:
     # Python 3
-    # from collections.abc import Iterable, Mapping
-    Mapping = dict
-    Iterable = (list, tuple)
+    from collections.abc import Iterable, Mapping
+    # Mapping = dict
+    # Iterable = (list, tuple)
 else:
     # Python 2
     from collections import Iterable, Mapping
+
 from copy import deepcopy
 
 
