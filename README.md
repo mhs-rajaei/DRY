@@ -60,8 +60,6 @@ if pointer_pattern in key:
 
 ##### Pointers must match to the anchors
 
-##### Select appropriate types for merge, We can't merge list with string or string with dict and etc.
-
 Priority in multiple pointers is: from newest to oldest, As Example:
 ```yaml
 key_name(&anchor_1):

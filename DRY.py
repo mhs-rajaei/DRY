@@ -582,32 +582,37 @@ class ConfigMerger:
                             merge_dict_parts = _anchor_part + _pointer_part
                             logger.error("We have two list for merge. We concat lists and we dont remove repeated values")
                             both_list_flag = True
-                        elif isinstance(_anchor_part, list):
-                            _anchor_part = dict.fromkeys(['_anchor_part_list_as_dict'], _anchor_part)
-                            logger.error("We have anchor part with type list. "
-                                         "We create a dict with key: '_anchor_part_list_as_dict' and add this list to that ")
+                        else:
+                            if isinstance(_anchor_part, list):
+                                _anchor_part = dict.fromkeys(['_anchor_part_list_as_dict'], _anchor_part)
+                                logger.error("We have anchor part with type list. "
+                                             "We create a dict with key: '_anchor_part_list_as_dict' and add this list to that ")
 
-                        elif isinstance(_pointer_part, list):
-                            _pointer_part = dict.fromkeys(['_pointer_part_list_as_dict'], _pointer_part)
-                            logger.error("We have pointer part with type list. "
-                                         "We create a dict with key: '_pointer_part_list_as_dict' and add this list to that ")
+                            if isinstance(_pointer_part, list):
+                                _pointer_part = dict.fromkeys(['_pointer_part_list_as_dict'], _pointer_part)
+                                logger.error("We have pointer part with type list. "
+                                             "We create a dict with key: '_pointer_part_list_as_dict' and add this list to that ")
 
                         both_str_flag = False
                         if isinstance(_anchor_part, string_types) and isinstance(_pointer_part, string_types):
                             # Concat lists
-                            merge_dict_parts = _anchor_part + _pointer_part
-                            logger.error("We have two string for merge. We concat strings")
+                            # merge_dict_parts = _anchor_part + _pointer_part
+                            merge_dict_parts = _pointer_part
+                            # logger.error("We have two string for merge. We concat strings")
                             both_str_flag = True
 
-                        elif isinstance(_anchor_part, string_types):
-                            _anchor_part = dict.fromkeys(['_anchor_part_string_as_dict'], _anchor_part)
-                            logger.error("We have anchor part with type of string. "
-                                         "We create a dict with key: '_anchor_part_string_as_dict' and add this string to that ")
+                        else:
+                            if isinstance(_anchor_part, string_types):
+                                # _anchor_part = dict.fromkeys(['_anchor_part_string_as_dict'], _anchor_part)
+                                # logger.error("We have anchor part with type of string. "
+                                #              "We create a dict with key: '_anchor_part_string_as_dict' and add this string to that ")
+                                merge_dict_parts = _pointer_part
+                                both_str_flag = True
 
-                        elif isinstance(_pointer_part, string_types):
-                            _pointer_part = dict.fromkeys(['_pointer_part_string_as_dict'], _pointer_part)
-                            logger.error("We have pointer part with type string. "
-                                         "We create a dict with key: '_pointer_part_string_as_dict' and add this string to that ")
+                            if isinstance(_pointer_part, string_types):
+                                _pointer_part = dict.fromkeys(['_pointer_part_string_as_dict'], _pointer_part)
+                                logger.error("We have pointer part with type string. "
+                                             "We create a dict with key: '_pointer_part_string_as_dict' and add this string to that ")
 
                         if not both_list_flag and not both_str_flag:
                             # Merge dicts
