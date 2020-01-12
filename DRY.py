@@ -126,6 +126,18 @@ class ConfigMerger:
             self.return_value = -1
             logger.error('Error in Config Merger')
             return -1
+        
+        # Checking for anchor that does not exit in pointer names
+        valid_pointer_names = []
+        for key, value in self.valid_pointers.items():
+            valid_pointer_names.append(value['name'])
+        for name in self.valid_anchor_names:
+            if name not in valid_pointer_names:
+                print(f"There is an anchor that does not any pointer to point on that, delete this anchor or add pointer to this anchor: '{name}'")
+                logging.error(f"There is an anchor that does not any pointer to point on that, delete this anchor or add pointer to this anchor: '{name}'")
+                self.return_value = -1
+                return -1
+            
         # Merging...
         _stat = self.merge_pointers_with_anchors(valid_anchors=self.valid_anchors, valid_pointers=self.valid_pointers)
         if _stat == -1:
