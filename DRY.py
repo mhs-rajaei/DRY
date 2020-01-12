@@ -126,18 +126,18 @@ class ConfigMerger:
             self.return_value = -1
             logger.error('Error in Config Merger')
             return -1
-        
-        # Checking for anchor that does not exit in pointer names
-        valid_pointer_names = []
-        for key, value in self.valid_pointers.items():
-            valid_pointer_names.append(value['name'])
-        for name in self.valid_anchor_names:
-            if name not in valid_pointer_names:
-                print(f"There is an anchor that does not any pointer to point on that, delete this anchor or add pointer to this anchor: '{name}'")
-                logging.error(f"There is an anchor that does not any pointer to point on that, delete this anchor or add pointer to this anchor: '{name}'")
-                self.return_value = -1
-                return -1
-            
+        #
+        # # Checking for anchor that does not exit in pointer names
+        # valid_pointer_names = []
+        # for key, value in self.valid_pointers.items():
+        #     valid_pointer_names.append(value['name'])
+        # for name in self.valid_anchor_names:
+        #     if name not in valid_pointer_names:
+        #         print(f"There is anchor that does not any pointer to point on that, delete this anchor or add pointer to this anchor: '{name}'")
+        #         logging.error(f"There is anchor that does not any pointer to point on that, delete this anchor or add pointer to this anchor: '{name}'")
+        #         self.return_value = -1
+        #         return -1
+
         # Merging...
         _stat = self.merge_pointers_with_anchors(valid_anchors=self.valid_anchors, valid_pointers=self.valid_pointers)
         if _stat == -1:
@@ -355,8 +355,7 @@ class ConfigMerger:
         try:
             if map_list:
                 first, rest = map_list[0], map_list[1:]
-
-                if rest:
+                if first and rest:
                     try:
                         if not isinstance(config_dict[first], dict):
                             print('list map key is not a dict')
@@ -376,25 +375,37 @@ class ConfigMerger:
 
                     self.del_in_dict(config_dict[first], rest, rename=rename, new_name=new_name)
                 else:
-                    # config_dict[first] = value
-                    _missing = object()
-                    _return = config_dict.get(first, _missing)
-                    if _return is _missing:
-                        # Key doesnt exist
-                        print("Key doesnt exist: {}".format(first))
-                        logger.error("Key doesnt exist: {}".format(first))
-                        self.recursive_dict_return_value = -1
-                        return -1
-                    else:
+                    if not first and len(rest) == 1:
                         if rename:
-                            config_dict[new_name] = config_dict[first]
-                            del config_dict[first]
+                            rest = rest[0]
+                            config_dict[new_name] = config_dict[rest]
+                            del config_dict[rest]
 
                         else:
-                            del config_dict[first]
+                            del config_dict[rest]
 
                         self.recursive_dict_return_value = 1
                         return 1
+                    else:
+                        # config_dict[first] = value
+                        _missing = object()
+                        _return = config_dict.get(first, _missing)
+                        if _return is _missing:
+                            # Key doesnt exist
+                            print("Key doesnt exist: {}".format(first))
+                            logger.error("Key doesnt exist: {}".format(first))
+                            self.recursive_dict_return_value = -1
+                            return -1
+                        else:
+                            if rename:
+                                config_dict[new_name] = config_dict[first]
+                                del config_dict[first]
+
+                            else:
+                                del config_dict[first]
+
+                            self.recursive_dict_return_value = 1
+                            return 1
             else:
                 print('Map list is empty')
                 logger.error('Map list is empty')
@@ -533,11 +544,8 @@ class ConfigMerger:
                 anchor_key = ANCHOR_KEYS[0]
                 anchor_parent = _valid_anchors[anchor_key]['parent']
                 new_name = self.anchor_start_pattern.join(anchor_key.rsplit(self.anchor_start_pattern)[0:-1])
-                if anchor_parent:
-                    self.del_in_dict(duplicate, (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(self.delimiter),
-                                     rename=True, new_name=new_name)
-                else:
-                    self.del_in_dict(duplicate, [anchor_key], rename=True, new_name=new_name)
+                self.del_in_dict(duplicate, (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(self.delimiter),
+                                 rename=True, new_name=new_name)
                 # After updating a key we need update _valid_anchors
                 _valid_anchors = self.update_valid_anchors(config_dict=duplicate)
                 if _valid_anchors == -1:
@@ -572,14 +580,13 @@ class ConfigMerger:
                         if exist_pointer_in_current_anchor and not valid_anchors[anchor_key]['processed']:
                             valid_anchors[anchor_key]['processed'] = True
                             self.merge_pointers_with_anchors(valid_anchors=valid_anchors, valid_pointers=_valid_pointers_)
-                        if anchor_parent:
+
+                        if not anchor_parent:
+                            _anchor_part = self.config_dict[anchor_key]
+                        else:
                             _anchor_part = self.get_from_dict(self.config_dict,
                                                               (self.delimiter.join(anchor_parent) + self.delimiter + anchor_key).split(
                                                                   self.delimiter))
-                        else:
-                            _anchor_part = self.get_from_dict(self.config_dict, [anchor_key])
-
-
                         if _anchor_part == -1:
                             return -1
 
@@ -594,39 +601,16 @@ class ConfigMerger:
                             merge_dict_parts = _anchor_part + _pointer_part
                             logger.error("We have two list for merge. We concat lists and we dont remove repeated values")
                             both_list_flag = True
-                        else:
-                            if isinstance(_anchor_part, list):
-                                _anchor_part = dict.fromkeys(['_anchor_part_list_as_dict'], _anchor_part)
-                                logger.error("We have anchor part with type list. "
-                                             "We create a dict with key: '_anchor_part_list_as_dict' and add this list to that ")
+                        elif isinstance(_anchor_part, list):
+                            _anchor_part = dict.fromkeys(['_anchor_part_list_as_dict'], _anchor_part)
+                            logger.error("We have anchor part with type list. "
+                                         "We create a dict with key: '_anchor_part_list_as_dict' and add this list to that ")
 
-                            if isinstance(_pointer_part, list):
-                                _pointer_part = dict.fromkeys(['_pointer_part_list_as_dict'], _pointer_part)
-                                logger.error("We have pointer part with type list. "
-                                             "We create a dict with key: '_pointer_part_list_as_dict' and add this list to that ")
-
-                        both_str_flag = False
-                        if isinstance(_anchor_part, string_types) and isinstance(_pointer_part, string_types):
-                            # Concat lists
-                            # merge_dict_parts = _anchor_part + _pointer_part
-                            merge_dict_parts = _pointer_part
-                            # logger.error("We have two string for merge. We concat strings")
-                            both_str_flag = True
-
-                        else:
-                            if isinstance(_anchor_part, string_types):
-                                # _anchor_part = dict.fromkeys(['_anchor_part_string_as_dict'], _anchor_part)
-                                # logger.error("We have anchor part with type of string. "
-                                #              "We create a dict with key: '_anchor_part_string_as_dict' and add this string to that ")
-                                merge_dict_parts = _pointer_part
-                                both_str_flag = True
-
-                            if isinstance(_pointer_part, string_types):
-                                _pointer_part = dict.fromkeys(['_pointer_part_string_as_dict'], _pointer_part)
-                                logger.error("We have pointer part with type string. "
-                                             "We create a dict with key: '_pointer_part_string_as_dict' and add this string to that ")
-
-                        if not both_list_flag and not both_str_flag:
+                        elif isinstance(_pointer_part, list):
+                            _pointer_part = dict.fromkeys(['_pointer_part_list_as_dict'], _pointer_part)
+                            logger.error("We have pointer part with type list. "
+                                         "We create a dict with key: '_pointer_part_list_as_dict' and add this list to that ")
+                        if not both_list_flag:
                             # Merge dicts
                             merge_dict_parts = MeldDict(_anchor_part) + _pointer_part
 
