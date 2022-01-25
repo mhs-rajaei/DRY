@@ -4,6 +4,8 @@
 This code can handle dictionary like formats, like YAML, JSON, INI, XML, etc.
 You can follow below example to find out how the code works.
 
+### *** Dont use my code, use [OmegaCon](https://github.com/omry/omegaconf) insted ***
+
 ---
 #### Tested by python 2.7.15 and python 3.6.8
 ##### Working with python >= 2.7.x and python >= 3.6.x
@@ -11,8 +13,8 @@ You can follow below example to find out how the code works.
 To ease of use some requirements added to libs.
 
 #### References:
-##### flatdict (https://pypi.org/project/flatdict/)
-##### melddict (https://pypi.org/project/melddict/)
+##### [flatdict](https://pypi.org/project/flatdict/)
+##### [melddict](https://pypi.org/project/melddict/)
 ###### melddict work with python >= 2.7.x and python >= 3.6.x and work in windows!
 ---
 ### Demo configuration in yaml
